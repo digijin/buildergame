@@ -1,0 +1,10 @@
+.vscode
+*.meta
+*.prefab
+*.asset
+*.mat
+*.unity
+Library
+obj
+ProjectSettings
+Temp
