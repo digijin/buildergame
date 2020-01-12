@@ -1,6 +1,15 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+public enum SelectedMode
+{
+    None,
+    Minion,
+    Build,
+    Furniture
+}
 
 public class Manager : MonoBehaviour
 {
@@ -11,10 +20,9 @@ public class Manager : MonoBehaviour
     public GameObject groundPrefab;
     public GameObject wallPrefab;
     public GameObject minionPrefab;
-
+    public SelectedMode selectedMode;
+    public List<Minion> selectedMinions;
     public float scale = 10;
-
-
     public Ground[,] grid;
 
     public List<Minion> minions;
@@ -24,16 +32,38 @@ public class Manager : MonoBehaviour
         CreateGrid();
 
         minions = new List<Minion>();
-        GameObject minion = Instantiate(minionPrefab, new Vector3(0, 0, 0), Quaternion.identity);
-        minions.Add(minion.GetComponent<Minion>());
+        Minion minion = Instantiate(minionPrefab, new Vector3(0, 0, 0), Quaternion.identity).GetComponent<Minion>();
+        // minion.targer
+        minion.target = GetGround(5, 5);
+        minions.Add(minion);
 
     }
 
     public void GroundClick(Ground ground)
     {
         // Debug.Log(x + "," + y);
-        Debug.Log(ground);
+        // Debug.Log(ground);
         minions[0].target = ground;
+    }
+    public List<Ground> GetAdjacentGround(Ground ground)
+    {
+        List<Ground> output = new List<Ground>();
+        int[,] combos = new int[,] { { -1, 0 }, { 1, 0 }, { 0, 1 }, { 0, -1 } };
+        for (int i = 0; i < combos.GetLength(0); i++)
+        {
+            Ground test = GetGround(ground.x + combos[i, 0], ground.y + combos[i, 1]);
+            if (test)
+            {
+                output.Add(test);
+            }
+        }
+
+        return output;
+    }
+
+    internal void MinionClick(Minion minion)
+    {
+        throw new NotImplementedException();
     }
 
     private void CreateGrid()
@@ -57,6 +87,7 @@ public class Manager : MonoBehaviour
                 GameObject tile = Instantiate(prefab, new Vector3(x, 0, y), Quaternion.identity);
 
                 Ground ground = tile.GetComponent<Ground>();
+                // Debug.Log(ground);
                 if (ground)
                 {
                     ground.x = x;
@@ -65,6 +96,28 @@ public class Manager : MonoBehaviour
                 grid[x, y] = ground;
             }
         }
+    }
+
+    public Ground GetGround(int x, int y)
+    {
+        if (x < 0 || y < 0)
+        {
+            return null;
+        }
+        if (x >= grid.GetLength(0) || y >= grid.GetLength(1))
+        {
+            return null;
+        }
+        return grid[x, y];
+    }
+
+    public Ground GetRandomGround()
+    {
+        Ground ground;
+        System.Random random = new System.Random();
+        ground = grid[random.Next(grid.GetLength(0)), random.Next(grid.GetLength(1))];
+
+        return ground;
     }
 
 

@@ -14,7 +14,6 @@ public class Ground : MonoBehaviour
     void Start()
     {
         manager = GameObject.FindObjectOfType<Manager>();
-
     }
 
     // Update is called once per frame
