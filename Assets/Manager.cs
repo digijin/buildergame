@@ -22,11 +22,11 @@ public class Manager : MonoBehaviour
 
     internal void BuildFurnitureButtonClicked(FurnitureType furniture)
     {
+        ClearSelectedMode();
         selectedMode = SelectedMode.Build;
         selectedFurnitureType = furniture;
 
         //remove old ghost
-        ClearSelectedMode();
         //add new ghost
         selectedFurnitureGhost = Instantiate(furniture.ghost, new Vector3(0, 0, 0), Quaternion.identity);
 
@@ -39,6 +39,12 @@ public class Manager : MonoBehaviour
         {
             Destroy(selectedFurnitureGhost);
         }
+        selectedMinions.ForEach(delegate (Minion minion)
+        {
+            minion.Deselect();
+        });
+        selectedMinions = new List<Minion>();
+        selectedMode = SelectedMode.None;
     }
 
     internal void GroundMouseOver(Ground ground)
@@ -83,7 +89,8 @@ public class Manager : MonoBehaviour
     {
         // Debug.Log(x + "," + y);
         // Debug.Log(ground);
-        minions[0].target = ground;
+        // minions[0].target = ground;
+        ClearSelectedMode();
     }
     public List<Ground> GetAdjacentGround(Ground ground)
     {
@@ -106,13 +113,17 @@ public class Manager : MonoBehaviour
         // throw new NotImplementedException();
         //check if shift is down
 
-        if (Input.GetButton("Fire3"))
+        if (Input.GetButton("Fire3") && selectedMode == SelectedMode.Minion)
         {
             Debug.Log("adding to selection");
         }
+        else
+        {
+            ClearSelectedMode();
+
+        }
 
         selectedMode = SelectedMode.Minion;
-        selectedMinions = new List<Minion>();
         selectedMinions.Add(minion);
 
         minion.Select();
@@ -176,13 +187,23 @@ public class Manager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonDown("Fire1"))
+        //FIRE 2 is the do shit command.
+
+        // FIRE1 is selection
+        if (Input.GetButtonDown("Fire2"))
         {
             if (selectedMode == SelectedMode.Build)
             {
                 GameObject furniture = Instantiate(selectedFurnitureType.prefab, selectedGround.transform.position, Quaternion.identity);
                 selectedGround.furnitureType = selectedFurnitureType;
 
+            }
+            if (selectedMode == SelectedMode.Minion)
+            {
+                selectedMinions.ForEach(delegate (Minion minion)
+                {
+                    minion.target = selectedGround;
+                });
             }
         }
     }
