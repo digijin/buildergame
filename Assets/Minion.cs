@@ -7,11 +7,20 @@ public class Minion : MonoBehaviour
 {
 
     public Ground target;
+    static System.Random random = new System.Random();
+
+    public GameObject innerGameObject;
+    public Material material;
+    public Material selectedMaterial;
 
     Manager manager;
+    Renderer rend;
+
     void Start()
     {
+        rend = innerGameObject.GetComponent<Renderer>();
         manager = GameObject.FindObjectOfType<Manager>();
+        Deselect();
     }
 
     // Update is called once per frame
@@ -23,7 +32,7 @@ public class Minion : MonoBehaviour
             Vector3 diff = transform.position - target.transform.position;
             if (diff.magnitude < .1)
             {
-                System.Random random = new System.Random();
+
                 if (random.Next(100) == 1)
                 {
                     List<Ground> options = manager.GetAdjacentGround(target);
@@ -42,6 +51,15 @@ public class Minion : MonoBehaviour
 
     void OnMouseUp()
     {
-        manager.MinionClick(this);
+        manager.MinionClicked(this);
+    }
+
+    internal void Select()
+    {
+        rend.sharedMaterial = selectedMaterial;
+    }
+    internal void Deselect()
+    {
+        rend.sharedMaterial = material;
     }
 }

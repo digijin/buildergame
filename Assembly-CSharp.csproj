@@ -53,8 +53,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\BuildFurnitureButton.cs" />
      <Compile Include="Assets\CameraControl.cs" />
-     <Compile Include="Assets\Furniture.cs" />
+     <Compile Include="Assets\FurnitureType.cs" />
      <Compile Include="Assets\Ground.cs" />
      <Compile Include="Assets\Manager.cs" />
      <Compile Include="Assets\Minion.cs" />
@@ -233,6 +234,7 @@
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Text.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Packed.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Packed 3.shader" />
+     <None Include="Assets\SilhouetteDiffuse.shader" />
      <None Include="Assets\NGUI\Examples\Shaders\Unlit - Additive Colored.shader" />
      <None Include="Assets\NGUI\Resources\Shaders\Unlit - Transparent Masked.shader" />
      <None Include="Assets\NGUI\Examples\Atlases\Refractive\Refractive Font - Header.txt" />

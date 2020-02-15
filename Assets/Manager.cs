@@ -19,6 +19,42 @@ public class Manager : MonoBehaviour
 
     public GameObject groundPrefab;
     public GameObject wallPrefab;
+
+    internal void BuildFurnitureButtonClicked(FurnitureType furniture)
+    {
+        selectedMode = SelectedMode.Build;
+        selectedFurnitureType = furniture;
+
+        //remove old ghost
+        ClearSelectedMode();
+        //add new ghost
+        selectedFurnitureGhost = Instantiate(furniture.ghost, new Vector3(0, 0, 0), Quaternion.identity);
+
+
+    }
+
+    private void ClearSelectedMode()
+    {
+        if (selectedFurnitureGhost)
+        {
+            Destroy(selectedFurnitureGhost);
+        }
+    }
+
+    internal void GroundMouseOver(Ground ground)
+    {
+        selectedGround = ground;
+        if (selectedMode == SelectedMode.Build)
+        {
+            selectedFurnitureGhost.transform.position = ground.transform.position;
+        }
+    }
+
+    Ground selectedGround;
+
+    FurnitureType selectedFurnitureType;
+    GameObject selectedFurnitureGhost;
+
     public GameObject minionPrefab;
     public SelectedMode selectedMode;
     public List<Minion> selectedMinions;
@@ -32,10 +68,14 @@ public class Manager : MonoBehaviour
         CreateGrid();
 
         minions = new List<Minion>();
-        Minion minion = Instantiate(minionPrefab, new Vector3(0, 0, 0), Quaternion.identity).GetComponent<Minion>();
-        // minion.targer
-        minion.target = GetGround(5, 5);
-        minions.Add(minion);
+
+        for (int i = 0; i < 10; i++)
+        {
+            Minion minion = Instantiate(minionPrefab, new Vector3(i, 0, 0), Quaternion.identity).GetComponent<Minion>();
+            minion.target = GetGround(5 + i, 5);
+            minions.Add(minion);
+
+        }
 
     }
 
@@ -61,9 +101,21 @@ public class Manager : MonoBehaviour
         return output;
     }
 
-    internal void MinionClick(Minion minion)
+    internal void MinionClicked(Minion minion)
     {
-        throw new NotImplementedException();
+        // throw new NotImplementedException();
+        //check if shift is down
+
+        if (Input.GetButton("Fire3"))
+        {
+            Debug.Log("adding to selection");
+        }
+
+        selectedMode = SelectedMode.Minion;
+        selectedMinions = new List<Minion>();
+        selectedMinions.Add(minion);
+
+        minion.Select();
     }
 
     private void CreateGrid()
@@ -73,18 +125,18 @@ public class Manager : MonoBehaviour
         {
             for (int y = 0; y < gridHeight; y++)
             {
-                float sample = Mathf.PerlinNoise(x / scale, y / scale);
-                sample = Mathf.Abs(sample - 0.5f);
+                // float sample = Mathf.PerlinNoise(x / scale, y / scale);
+                // sample = Mathf.Abs(sample - 0.5f);
 
-                GameObject prefab = sample > 0.05 ? groundPrefab : wallPrefab;
+                // GameObject prefab = sample > 0.05 ? groundPrefab : wallPrefab;
 
-                if (x % 10 == 0 || y % 10 == 0)
-                {
-                    prefab = groundPrefab;
-                }
+                // if (x % 10 == 0 || y % 10 == 0)
+                // {
+                //     prefab = groundPrefab;
+                // }
 
 
-                GameObject tile = Instantiate(prefab, new Vector3(x, 0, y), Quaternion.identity);
+                GameObject tile = Instantiate(groundPrefab, new Vector3(x, 0, y), Quaternion.identity);
 
                 Ground ground = tile.GetComponent<Ground>();
                 // Debug.Log(ground);
@@ -126,8 +178,12 @@ public class Manager : MonoBehaviour
     {
         if (Input.GetButtonDown("Fire1"))
         {
-            // Debug.Log("fuckyou");
+            if (selectedMode == SelectedMode.Build)
+            {
+                GameObject furniture = Instantiate(selectedFurnitureType.prefab, selectedGround.transform.position, Quaternion.identity);
+                selectedGround.furnitureType = selectedFurnitureType;
 
+            }
         }
     }
 }

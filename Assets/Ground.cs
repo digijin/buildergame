@@ -11,6 +11,8 @@ public class Ground : MonoBehaviour
     // Use this for initialization
 
     Manager manager;
+    internal FurnitureType furnitureType;
+
     void Start()
     {
         manager = GameObject.FindObjectOfType<Manager>();
@@ -27,5 +29,9 @@ public class Ground : MonoBehaviour
         manager.GroundClick(this);
 
 
+    }
+    void OnMouseOver()
+    {
+        manager.GroundMouseOver(this);
     }
 }
